@@ -14,7 +14,9 @@ public class TelephoneCommands : MonoBehaviour
     public char[] charInput, randomSeq;
     private char input;
     private int score = 0;
-    private bool phonePutDownCheck = false, runningTimeWaitCoroutine = false;
+    private bool phonePutDownCheck = true, runningTimeWaitCoroutine = false, gameStart = false;
+
+    private SerialController controller;
 
     [SerializeField] private GameObject yourCodeText, combinationCodeText;
     [SerializeField] private TextMeshProUGUI scoreText;
@@ -114,39 +116,24 @@ public class TelephoneCommands : MonoBehaviour
         charInput = new char[maxInput];
         randomSeq = new char[maxInput];
         ArrayClear(); 
-        RandomSequence();
+
+        controller = GetComponent<SerialController>();
     }
 
 
     // Update is called once per frame
     void Update()
-    {
-        Debug.Log(phonePutDownCheck);
+    {        
         if(phonePutDownCheck && !runningTimeWaitCoroutine)
             TestInput();
-
-        if (Input.GetKeyUp(KeyCode.CapsLock))
-            phonePutDownCheck = false;
-        else if(Input.GetKeyDown(KeyCode.CapsLock))
-            phonePutDownCheck=true;
-
 
         PlaceInputInText(charInput);
         PlaceRandomInText(randomSeq);
 
         if (IsArrayFilled(charInput))
         {
-            if (charInput.SequenceEqual(randomSeq))
-            { 
-                phonePutDownCheck = false;
-                score += 100;
-                Array.Clear(randomSeq, 0, maxInput);
-                StartCoroutine(TimeWait(3f));                
-            }
-            
+            ArrayCheck();            
             ArrayClear();
-
-
         }
 
         scoreText.text = "Score: " + score; 
@@ -154,8 +141,21 @@ public class TelephoneCommands : MonoBehaviour
 
     private void ArrayClear()
     {
+        Debug.Log("Array Clear");
         for (int i = 0; i < maxInput; i++)
             charInput[i] = 'ª';
+    }
+
+    private void ArrayCheck()
+    {
+        Debug.Log("Array Check");
+        if (charInput.SequenceEqual(randomSeq))
+        {
+            phonePutDownCheck = false;
+            score += 100;
+        }
+            Array.Clear(randomSeq, 0, maxInput);
+            StartCoroutine(TimeWait(3f));
     }
 
     private void ArrayInput(char input)
@@ -189,14 +189,19 @@ public class TelephoneCommands : MonoBehaviour
 
     void RandomSequence()
     {
-        combinationCodeText.GetComponent<TextMeshProUGUI>().text = "";
-
-        for (int i = 0; i < maxInput; i++)
+        if(gameStart && phonePutDownCheck)
         {
-            randomSeq[i] = (char)Mathf.RoundToInt(UnityEngine.Random.Range(48f, 57f));
-        }
+            Debug.Log("Random Sequence gotten");
+            combinationCodeText.GetComponent<TextMeshProUGUI>().text = "";
 
-        
+            for (int i = 0; i < maxInput; i++)
+            {
+                randomSeq[i] = (char)Mathf.RoundToInt(UnityEngine.Random.Range(48f, 57f));
+            }
+            GetComponent<SerialController>().SendSerialMessage("ring");
+        }
+        else
+            Debug.Log("Can't get random sequence");
     }
 
     private bool IsArrayFilled(char[] array)
@@ -213,49 +218,25 @@ public class TelephoneCommands : MonoBehaviour
 
     void OnMessageArrived(string msg)
     {
-        if (msg == "KM_KEYDOWN (1)")
+        if (msg == "ring" || msg == "message recieved") { }
+
+        else if(msg == "up")
         {
+            phonePutDownCheck = false;
         }
-        else if (msg == "KM_KEYDOWN (2)")
+        else if (msg == "start")
         {
+            gameStart = true;
+            Debug.Log("Game Started");
+            RandomSequence();
         }
-        else if (msg == "KM_KEYDOWN (3)")
+        else if(msg == "down")
         {
+            phonePutDownCheck = true;
+            ArrayCheck();
+            ArrayClear();
         }
-        else if (msg == "KM_KEYDOWN (4)")
-        {
-        }
-        else if (msg == "KM_KEYDOWN (5)")
-        {
-        }
-        else if (msg == "KM_KEYDOWN (6)")
-        {
-        }
-        else if (msg == "KM_KEYDOWN (7)")
-        {
-        }
-        else if (msg == "KM_KEYDOWN (8)")
-        {
-        }
-        else if (msg == "KM_KEYDOWN (9)")
-        {
-        }
-        else if (msg == "KM_KEYDOWN (0)")
-        {
-        }
-        else if (msg == "KM_KEYDOWN (#)")
-        {
-        }
-        else if (msg == "KM_KEYDOWN (*)")
-        {
-        }
-        else if (msg == "RC_UP")
-        { 
-        }
-        else if (msg == "RC_DOWN")
-        {
-        }
-            
+        else
             ArrayInput(msg.ToCharArray()[0]);
     }
     
@@ -287,7 +268,6 @@ public class TelephoneCommands : MonoBehaviour
         RandomSequence();
         runningTimeWaitCoroutine = false;
         phonePutDownCheck = false;
-        GetComponent<SerialController>().SendMessage("ring");
     }
 
 }
