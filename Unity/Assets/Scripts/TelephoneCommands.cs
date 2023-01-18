@@ -15,6 +15,8 @@ public class TelephoneCommands : MonoBehaviour
     private int score = 0;
     private bool phonePutDownCheck = true, runningTimeWaitCoroutine = false, gameStart = false;
 
+    [SerializeField]private bool inMenu = true;
+
     [SerializeField] private GameObject yourCodeText, combinationCodeText;
     [SerializeField] private TextMeshProUGUI scoreText;
     
@@ -31,7 +33,7 @@ public class TelephoneCommands : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {        
+    {
         if(phonePutDownCheck && !runningTimeWaitCoroutine)
             TestInput();
 
@@ -61,9 +63,13 @@ public class TelephoneCommands : MonoBehaviour
         {
             phonePutDownCheck = false;
             score += 100;
+            CorrectSound();
         }
-            Array.Clear(randomSeq, 0, maxInput);
-            StartCoroutine(TimeWait(3f));
+        else if (!charInput.SequenceEqual(randomSeq) && IsArrayFilled(charInput))
+            IncorrectSound();
+            
+        Array.Clear(randomSeq, 0, maxInput);
+        StartCoroutine(TimeWait(3f));
     }
 
     private void ArrayInput(char input)
@@ -107,6 +113,7 @@ public class TelephoneCommands : MonoBehaviour
                 randomSeq[i] = (char)Mathf.RoundToInt(UnityEngine.Random.Range(48f, 57f));
             }
             GetComponent<SerialController>().SendSerialMessage("ring");
+            NewCodeSound();
         }
         else
             Debug.Log("Can't get random sequence");
@@ -145,7 +152,11 @@ public class TelephoneCommands : MonoBehaviour
             ArrayClear();
         }
         else
+        {
             ArrayInput(msg.ToCharArray()[0]);
+            KeyInputSound();
+            Debug.Log("played sound");
+        }
     }
     
     void PlaceInputInText(char[] array)
@@ -155,13 +166,7 @@ public class TelephoneCommands : MonoBehaviour
         {
             if (array[i] != 'ª')
             {
-            yourCodeText.GetComponent<TextMeshProUGUI>().text += array[i].ToString() + " ";
-
-                KeyInputSound();
-
-                //qual é que é o codigo para ele escrever algo para ver se é problema do cdg ou do fmod
-
-                Debug.Log("played sound");
+                yourCodeText.GetComponent<TextMeshProUGUI>().text += array[i].ToString() + " ";             
             }
         }
     }
@@ -184,30 +189,32 @@ public class TelephoneCommands : MonoBehaviour
         phonePutDownCheck = false;
     }
 
+    #region Sounds
+
     private void MenuSound()
     {
-        RuntimeManager.PlayOneShot("event:/Character (Ellen)/Damaged 3");
-
+        RuntimeManager.PlayOneShot("event:/Tv_noise_Menu");
     }
 
-    private void KeyInputSound() //onde é que eu ponho isto para testar
+    private void KeyInputSound()
     {
-        RuntimeManager.PlayOneShot("event:/Master/Teclas");
+        RuntimeManager.PlayOneShot("event:/Teclas");
     }
 
     private void CorrectSound()
     {
-
+        RuntimeManager.PlayOneShot("event:/Correcto");
     }
 
     private void IncorrectSound()
     {
-
+        RuntimeManager.PlayOneShot("event:/Wrong");
     }
 
     private void NewCodeSound()
     {
-
+        RuntimeManager.PlayOneShot("event:/New Code");
     }
 
+    #endregion
 }
