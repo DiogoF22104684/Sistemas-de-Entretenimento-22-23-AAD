@@ -6,6 +6,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.UI;
 using FMODUnity;
 
 
@@ -15,12 +16,16 @@ public class TelephoneCommands : MonoBehaviour
     private int score = 0;
     private bool phonePutDownCheck = true, runningTimeWaitCoroutine = false, gameStart = false;
 
-    [SerializeField]private bool inMenu = true;
-
     [SerializeField] private GameObject yourCodeText, combinationCodeText;
     [SerializeField] private TextMeshProUGUI scoreText;
     
     [SerializeField] private int maxInput = 8;
+
+    [SerializeField, Header("Timer")] private UnityEngine.UI.Slider timerSlider;
+    [SerializeField] private Text timerText;
+    [SerializeField] private float gameTime;
+
+    private bool stopTimer;
 
     // Start is called before the first frame update
     void Start()
@@ -40,8 +45,15 @@ public class TelephoneCommands : MonoBehaviour
         PlaceInputInText(charInput);
         PlaceRandomInText(randomSeq);
 
+        if (!IsArrayFilled(charInput) && IsArrayFilled(randomSeq))
+        {
+            stopTimer = false;
+            TimerToInput();
+        }
+
         if (IsArrayFilled(charInput))
         {
+            stopTimer = true;
             ArrayCheck();            
             ArrayClear();
         }
@@ -147,6 +159,7 @@ public class TelephoneCommands : MonoBehaviour
         }
         else if(msg == "down")
         {
+            stopTimer = true;
             phonePutDownCheck = true;
             ArrayCheck();
             ArrayClear();
@@ -189,6 +202,27 @@ public class TelephoneCommands : MonoBehaviour
         phonePutDownCheck = false;
     }
 
+    private void TimerToInput()
+    {
+        float time = gameTime - Time.time;
+
+        int minutes = Mathf.FloorToInt(time / 60);
+        int seconds = Mathf.FloorToInt(time - minutes * 60f);
+
+        string TextTime = string.Format("{0:0}:{1:00}", minutes, seconds);
+
+        if (time <= 0 || stopTimer == true)
+        {
+            ArrayCheck();
+            ArrayClear();
+        }
+        if (stopTimer == false)
+        {
+            timerText.text = TextTime;
+            timerSlider.value = time;
+        }
+
+    }
     #region Sounds
 
     private void MenuSound()
