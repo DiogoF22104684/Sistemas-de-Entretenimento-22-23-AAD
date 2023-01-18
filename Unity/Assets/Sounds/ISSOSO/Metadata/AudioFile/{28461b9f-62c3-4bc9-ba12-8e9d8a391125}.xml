@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{28461b9f-62c3-4bc9-ba12-8e9d8a391125}">
+		<property name="assetPath">
+			<value>Tecla3.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.4647392290249432</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{8b3e39f5-9117-4bfd-a816-83b86904868d}</destination>
+		</relationship>
+	</object>
+</objects>
