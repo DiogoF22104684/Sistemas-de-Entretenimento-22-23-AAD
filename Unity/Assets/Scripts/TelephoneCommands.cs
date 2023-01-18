@@ -9,106 +9,14 @@ using UnityEngine.UIElements;
 
 public class TelephoneCommands : MonoBehaviour
 {
-    private bool Key1, Key2, Key3, Key4, Key5, Key6, Key7, Key8, Key9, Key0, KeyA, KeyH;
-    private int Keys = 0;
     public char[] charInput, randomSeq;
-    private char input;
     private int score = 0;
     private bool phonePutDownCheck = true, runningTimeWaitCoroutine = false, gameStart = false;
-
-    private SerialController controller;
 
     [SerializeField] private GameObject yourCodeText, combinationCodeText;
     [SerializeField] private TextMeshProUGUI scoreText;
     
     [SerializeField] private int maxInput = 8;
-    /*
-    #region Phone Layout Editor
-    [ButtonGroup("FirstLine")]
-    [LabelText("1")]
-    private void One()
-    {
-        ArrayInput('1');
-    }
-
-    [ButtonGroup("FirstLine")]
-    [LabelText("2")]
-    private void Two()
-    {
-        ArrayInput((char)2);
-    }
-
-    [ButtonGroup("FirstLine")]
-    [LabelText("3")]
-    private void Three()
-    {
-        ArrayInput((char)3);
-    }
-
-    [ButtonGroup("SecondLine")]
-    [LabelText("4")]
-    private void Four()
-    {
-        ArrayInput((char)4);
-    }
-
-    [ButtonGroup("SecondLine")]
-    [LabelText("5")]
-    private void Five()
-    {
-        ArrayInput((char)5);
-    }
-
-    [ButtonGroup("SecondLine")]
-    [LabelText("6")]
-    private void Six()
-    {
-        ArrayInput((char)6);
-    }
-
-    [ButtonGroup("ThirdLine")]
-    [LabelText("7")]
-    private void Seven()
-    {
-        ArrayInput((char)7);
-    }
-
-    [ButtonGroup("ThirdLine")]
-    [LabelText("8")]
-    private void Eight()
-    {
-        ArrayInput((char)8);
-    }
-
-    [ButtonGroup("ThirdLine")]
-    [LabelText("9")]
-    private void Nine()
-    {
-        ArrayInput((char)9);
-    }
-
-    [ButtonGroup("FourthLine")]
-    [LabelText("*")]
-    private void Asterix()
-    {
-        ArrayInput((char)11);
-    }
-
-    [ButtonGroup("FourthLine")]
-    [LabelText("0")]
-    private void Zero()
-    {
-        ArrayInput((char)10);
-    }
-
-    [ButtonGroup("FourthLine")]
-    [LabelText("#")]
-    private void Hashtag()
-    {
-        ArrayInput((char)12);
-    }
-    #endregion
-    */
 
     // Start is called before the first frame update
     void Start()
@@ -116,8 +24,6 @@ public class TelephoneCommands : MonoBehaviour
         charInput = new char[maxInput];
         randomSeq = new char[maxInput];
         ArrayClear(); 
-
-        controller = GetComponent<SerialController>();
     }
 
 
@@ -268,6 +174,31 @@ public class TelephoneCommands : MonoBehaviour
         RandomSequence();
         runningTimeWaitCoroutine = false;
         phonePutDownCheck = false;
+    }
+
+    private void MenuSound()
+    {
+
+    }
+
+    private void KeyInputSound()
+    {
+
+    }
+
+    private void CorrectSound()
+    {
+
+    }
+
+    private void IncorrectSound()
+    {
+
+    }
+
+    private void NewCodeSound()
+    {
+
     }
 
 }
