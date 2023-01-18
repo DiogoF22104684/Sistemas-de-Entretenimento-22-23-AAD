@@ -6,6 +6,8 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using FMODUnity;
+
 
 public class TelephoneCommands : MonoBehaviour
 {
@@ -154,6 +156,12 @@ public class TelephoneCommands : MonoBehaviour
             if (array[i] != 'ª')
             {
             yourCodeText.GetComponent<TextMeshProUGUI>().text += array[i].ToString() + " ";
+
+                KeyInputSound();
+
+                //qual é que é o codigo para ele escrever algo para ver se é problema do cdg ou do fmod
+
+                Debug.Log("played sound");
             }
         }
     }
@@ -178,12 +186,13 @@ public class TelephoneCommands : MonoBehaviour
 
     private void MenuSound()
     {
+        RuntimeManager.PlayOneShot("event:/Character (Ellen)/Damaged 3");
 
     }
 
-    private void KeyInputSound()
+    private void KeyInputSound() //onde é que eu ponho isto para testar
     {
-
+        RuntimeManager.PlayOneShot("event:/Master/Teclas");
     }
 
     private void CorrectSound()
